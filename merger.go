@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/fs"
 	"os"
+	"sort"
 )
 
 func copy_file(src, dst string) int64 {
@@ -40,12 +41,17 @@ func list(wd string) []fs.DirEntry {
 
 
 func main() {
-	wd, err := os.Getwd()
+	var dirs_to_merge = []string{}
+		wd, err := os.Getwd()
 	if err != nil {
 		panic(err) 
 	}
 	contents := list(wd + "/dirs_to_merge")
 	for _, item := range contents {
-		fmt.Println(item.Name(), item.IsDir())
+		if item.IsDir() == true {
+			dirs_to_merge = append(dirs_to_merge, item.Name())
+		}
 	}
+	sort.Strings(dirs_to_merge)
+	fmt.Println(dirs_to_merge)
 }
