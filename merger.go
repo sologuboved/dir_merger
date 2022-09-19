@@ -30,6 +30,11 @@ func copy_file(src, dst string) int64 {
 }
 
 
+func copy_folder(src, dst string) {
+	fmt.Printf("%s -> %s\n", src, dst)
+}
+
+
 func list(wd string) []fs.DirEntry {
 	fmt.Printf("Listing %s...\n", wd)
 	contents, err := os.ReadDir(wd)
@@ -42,6 +47,7 @@ func list(wd string) []fs.DirEntry {
 
 func main() {
 	var dirs_to_merge = []string{}
+	var dst string
 		wd, err := os.Getwd()
 	if err != nil {
 		panic(err) 
@@ -53,9 +59,11 @@ func main() {
 		}
 	}
 	sort.Strings(dirs_to_merge)
-	for ind, filename := range dirs_to_merge {
-		if ind != 0 {
-			fmt.Println(filename)
+	for ind, dirname := range dirs_to_merge {
+		if ind == 0 {
+			dst = dirname
+		} else {
+			copy_folder(dirname, dst)
 		}
 	}
 }
