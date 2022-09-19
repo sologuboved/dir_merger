@@ -35,19 +35,19 @@ func copy_file(src, dst string) int64 {
 func merge_folders(src, dst string) {
 	fmt.Printf("%s -> %s\n", src, dst)
 	src_dirnames, src_filenames := list_dir(src)
-	for _, dirname := range src_dirnames {
-		dirpath := filepath.Join(dst, dirname)
-		_, err := os.Stat(dirpath)
-		if os.IsNotExist(err) {
-			os.MkdirAll(dirpath, os.ModePerm)
-		}
-	}
 	for _, filename := range src_filenames {
 		num_bytes := copy_file(
 			filepath.Join(src, filename), 
 			filepath.Join(dst, filename),
 		)
 		fmt.Printf("Copied %v bytes\n", num_bytes)
+	}
+	for _, dirname := range src_dirnames {
+		dirpath := filepath.Join(dst, dirname)
+		_, err := os.Stat(dirpath)
+		if os.IsNotExist(err) {
+			os.MkdirAll(dirpath, os.ModePerm)
+		}
 	}
 }
 
