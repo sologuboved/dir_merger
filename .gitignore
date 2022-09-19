@@ -1,2 +1,3 @@
 .DS_Store
 dirs_to_merge/
+go.mod
