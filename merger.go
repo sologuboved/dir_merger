@@ -32,7 +32,7 @@ func copy_file(src, dst string) int64 {
 }
 
 
-func merge_folder(src, dst string) {
+func merge_folders(src, dst string) {
 	fmt.Printf("%s -> %s\n", src, dst)
 	src_dirnames, src_filenames := list_dir(src)
 	for _, dirname := range src_dirnames {
@@ -83,7 +83,7 @@ func main() {
 		if ind == 0 {
 			dst = filepath.Join(path_stub, dirname)
 		} else {
-			merge_folder(filepath.Join(path_stub, dirname), dst)
+			merge_folders(filepath.Join(path_stub, dirname), dst)
 		}
 	}
 }
