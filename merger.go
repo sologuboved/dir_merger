@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"io"
-	"io/fs"
 	"os"
+	"path/filepath"
 	"sort"
 )
 
@@ -32,38 +32,49 @@ func copy_file(src, dst string) int64 {
 
 func copy_folder(src, dst string) {
 	fmt.Printf("%s -> %s\n", src, dst)
+	src_dirnames, _ := list_dir(src)
+	for _, dirname := range src_dirnames {
+		dirpath := filepath.Join(dst, dirname)
+		_, err := os.Stat(dirpath)
+		if os.IsNotExist(err) {
+			os.MkdirAll(dirpath, os.ModePerm)
+		}
+	}
 }
 
 
-func list(wd string) []fs.DirEntry {
+func list_dir(wd string) ([]string, []string) {
 	fmt.Printf("Listing %s...\n", wd)
+	var dirnames, filenames []string
 	contents, err := os.ReadDir(wd)
 	if err != nil {
 		panic(err)
 	}
-	return contents
+	for _, item := range contents {
+		if item.IsDir() {
+			dirnames = append(dirnames, item.Name())
+		} else {
+			filenames = append(filenames, item.Name())
+		}
+	}
+	return dirnames, filenames
 }
 
 
 func main() {
-	var dirs_to_merge = []string{}
 	var dst string
-		wd, err := os.Getwd()
+	wd, err := os.Getwd()
 	if err != nil {
 		panic(err) 
 	}
-	contents := list(wd + "/dirs_to_merge")
-	for _, item := range contents {
-		if item.IsDir() == true {
-			dirs_to_merge = append(dirs_to_merge, item.Name())
-		}
-	}
+	path_stub := filepath.Join(wd, "/dirs_to_merge")
+	dirs_to_merge, _ := list_dir(path_stub)
 	sort.Strings(dirs_to_merge)
 	for ind, dirname := range dirs_to_merge {
 		if ind == 0 {
-			dst = dirname
+			dst = filepath.Join(path_stub, dirname)
 		} else {
-			copy_folder(dirname, dst)
+			copy_folder(filepath.Join(path_stub, dirname), dst)
 		}
 	}
 }
