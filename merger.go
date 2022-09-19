@@ -53,5 +53,9 @@ func main() {
 		}
 	}
 	sort.Strings(dirs_to_merge)
-	fmt.Println(dirs_to_merge)
+	for ind, filename := range dirs_to_merge {
+		if ind != 0 {
+			fmt.Println(filename)
+		}
+	}
 }
