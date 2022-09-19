@@ -30,6 +30,7 @@ func copy_file(src, dst string) int64 {
 
 
 func list(wd string) []fs.DirEntry {
+	fmt.Printf("Listing %s...\n", wd)
 	contents, err := os.ReadDir(wd)
 	if err != nil {
 		panic(err)
@@ -43,8 +44,7 @@ func main() {
 	if err != nil {
 		panic(err) 
 	}
-	contents := list(wd)
-	fmt.Println(contents)
+	contents := list(wd + "/dirs_to_merge")
 	for _, item := range contents {
 		fmt.Println(item.Name(), item.IsDir())
 	}
