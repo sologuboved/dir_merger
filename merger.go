@@ -6,10 +6,17 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"time"
 )
 
+func time_it(start time.Time, name string) {
+	elapsed := time.Since(start)
+	fmt.Printf("%s %s\n", name, fmt.Sprintf("took %s", elapsed))
+}
+
+
 func copy_file(src, dst string) int64 {
-	fmt.Printf("Copying file %v to %v...\n", src, dst)
+	fmt.Printf("\nCopying file %v to %v...\n", src, dst)
 	source, err := os.Open(
 		src)
 	if err != nil {
@@ -43,11 +50,12 @@ func merge_folders(src, dst string) {
 		fmt.Printf("Copied %v bytes\n", num_bytes)
 	}
 	for _, dirname := range src_dirnames {
-		dirpath := filepath.Join(dst, dirname)
-		_, err := os.Stat(dirpath)
+		dst_dirpath := filepath.Join(dst, dirname)
+		_, err := os.Stat(dst_dirpath)
 		if os.IsNotExist(err) {
-			os.MkdirAll(dirpath, os.ModePerm)
+			os.MkdirAll(dst_dirpath, os.ModePerm)
 		}
+		merge_folders(filepath.Join(src, dirname), dst_dirpath)
 	}
 }
 
@@ -71,6 +79,7 @@ func list_dir(wd string) ([]string, []string) {
 
 
 func main() {
+	defer time_it(time.Now(), "main")
 	var dst string
 	wd, err := os.Getwd()
 	if err != nil {
