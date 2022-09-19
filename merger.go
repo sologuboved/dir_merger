@@ -39,7 +39,7 @@ func copy_file(src, dst string) int64 {
 }
 
 
-func merge_folders(src, dst string) {
+func merge_dirs(src, dst string) {
 	fmt.Printf("%s -> %s\n", src, dst)
 	src_dirnames, src_filenames := list_dir(src)
 	for _, filename := range src_filenames {
@@ -55,7 +55,7 @@ func merge_folders(src, dst string) {
 		if os.IsNotExist(err) {
 			os.MkdirAll(dst_dirpath, os.ModePerm)
 		}
-		merge_folders(filepath.Join(src, dirname), dst_dirpath)
+		merge_dirs(filepath.Join(src, dirname), dst_dirpath)
 	}
 }
 
@@ -92,7 +92,7 @@ func main() {
 		if ind == 0 {
 			dst = filepath.Join(path_stub, dirname)
 		} else {
-			merge_folders(filepath.Join(path_stub, dirname), dst)
+			merge_dirs(filepath.Join(path_stub, dirname), dst)
 		}
 	}
 }
