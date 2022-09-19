@@ -2,20 +2,39 @@ package main
 
 import (
 	"fmt"
-	// "io/ioutil"
-	// "path/filepath"
+	"io"
+	"io/fs"
 	"os"
 )
 
+func copy_file(src, dst string) int64 {
+	source, err := os.Open(src)
+	if err != nil {
+		panic(err)
+	}
+	defer source.Close()
 
-func list(wd string) {
+	destination, err := os.Create(dst)
+	if err != nil {
+		panic(err)
+	}
+	defer destination.Close()
+
+	num_bytes, err := io.Copy(destination, source)
+	if err != nil {
+		panic(err)
+	}
+
+	return num_bytes
+}
+
+
+func list(wd string) []fs.DirEntry {
 	contents, err := os.ReadDir(wd)
 	if err != nil {
 		panic(err)
 	}
-	for _, item := range contents {
-		fmt.Println(item.Name(), item.IsDir())
-	}
+	return contents
 }
 
 
@@ -24,5 +43,9 @@ func main() {
 	if err != nil {
 		panic(err) 
 	}
-	list(wd)
+	contents := list(wd)
+	fmt.Println(contents)
+	for _, item := range contents {
+		fmt.Println(item.Name(), item.IsDir())
+	}
 }
