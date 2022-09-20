@@ -9,13 +9,13 @@ import (
 	"time"
 )
 
-func time_it(start time.Time, name string) {
+func TimeIt(start time.Time, name string) {
 	elapsed := time.Since(start)
 	fmt.Printf("%s %s\n", name, fmt.Sprintf("took %s", elapsed))
 }
 
 
-func copy_file(src, dst string) int64 {
+func CopyFile(src, dst string) int64 {
 	fmt.Printf("\nCopying file %v to %v...\n", src, dst)
 	source, err := os.Open(
 		src)
@@ -39,11 +39,11 @@ func copy_file(src, dst string) int64 {
 }
 
 
-func merge_dirs(src, dst string) {
+func MergeDirs(src, dst string) {
 	fmt.Printf("%s -> %s\n", src, dst)
-	src_dirnames, src_filenames := list_dir(src)
+	src_dirnames, src_filenames := ListDir(src)
 	for _, filename := range src_filenames {
-		num_bytes := copy_file(
+		num_bytes := CopyFile(
 			filepath.Join(src, filename), 
 			filepath.Join(dst, filename),
 		)
@@ -55,12 +55,12 @@ func merge_dirs(src, dst string) {
 		if os.IsNotExist(err) {
 			os.MkdirAll(dst_dirpath, os.ModePerm)
 		}
-		merge_dirs(filepath.Join(src, dirname), dst_dirpath)
+		MergeDirs(filepath.Join(src, dirname), dst_dirpath)
 	}
 }
 
 
-func list_dir(wd string) ([]string, []string) {
+func ListDir(wd string) ([]string, []string) {
 	fmt.Printf("Listing %s...\n", wd)
 	var dirnames, filenames []string
 	contents, err := os.ReadDir(wd)
@@ -79,20 +79,20 @@ func list_dir(wd string) ([]string, []string) {
 
 
 func main() {
-	defer time_it(time.Now(), "main")
+	defer TimeIt(time.Now(), "main")
 	var dst string
 	wd, err := os.Getwd()
 	if err != nil {
 		panic(err) 
 	}
 	path_stub := filepath.Join(wd, "/dirs_to_merge")
-	dirs_to_merge, _ := list_dir(path_stub)
+	dirs_to_merge, _ := ListDir(path_stub)
 	sort.Strings(dirs_to_merge)
 	for ind, dirname := range dirs_to_merge {
 		if ind == 0 {
 			dst = filepath.Join(path_stub, dirname)
 		} else {
-			merge_dirs(filepath.Join(path_stub, dirname), dst)
+			MergeDirs(filepath.Join(path_stub, dirname), dst)
 		}
 	}
 }
